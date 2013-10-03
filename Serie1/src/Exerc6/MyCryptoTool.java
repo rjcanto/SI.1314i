@@ -46,25 +46,45 @@ public class MyCryptoTool {
 			
 	}
 	
-	public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
+	private byte[] read(int nBits, byte[] h) {
+		int nFullBytes = nBits / 8;
+		byte[] result ;
 		
-		MyCryptoTool crypto = new MyCryptoTool();
-		crypto.Question51(1);
-		crypto.Question51(2);
-		crypto.Question51(4);
+		result = (nBits%8 > 0)?new byte[nFullBytes +1]:new byte[nFullBytes];
+				
+		if (nBits>=8) {
+			System.arraycopy(h, 0, result, 0, nFullBytes);
+			int remainingBits = nBits - (nFullBytes)*8;
+			if(remainingBits==0)
+				return result;
 		
+			result[nFullBytes+1] = (byte) (h[nFullBytes] >> (8-remainingBits));
+			return result;
+		}
+		
+		result[0] = (byte) (h[0] >> (nBits));
+		return result ;
 		
 	}
 	
-	private void Question51( int nBytes) 
+	public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
+		
+		MyCryptoTool crypto = new MyCryptoTool();
+		crypto.Question51(8);
+		crypto.Question51(16);
+		crypto.Question51(32);
+		
+	}
+	
+	private void Question51( int nBits) 
 	{
 		System.out.print("GoodApp Hash: ");
-		for (byte b : this.readGood(nBytes))
+		for (byte b : this.read(nBits,hashGood))
 		{
 			System.out.printf("%x", b);
 		}
 		System.out.print("\nBadApp Hash: ");
-		for (byte b : this.readBad(nBytes))
+		for (byte b : this.read(nBits,hashBad))
 		{
 			System.out.printf("%x", b);
 	
