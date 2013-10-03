@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Random;
+
+import com.sun.xml.internal.ws.client.dispatch.MessageDispatch;
 
 public class MyCryptoTool {
 	private byte[] hashGood ;
@@ -18,6 +21,12 @@ public class MyCryptoTool {
 	}
 	
 	private byte[] produceHash(String filePath) throws NoSuchAlgorithmException, IOException {
+		MessageDigest md =  produceMessageDigest(filePath);
+		
+		return md.digest();
+	}
+	
+	private MessageDigest produceMessageDigest(String filePath) throws NoSuchAlgorithmException, IOException {
 		MessageDigest md =  MessageDigest.getInstance("SHA1");
 		InputStream is = new FileInputStream(filePath);
 		
@@ -30,7 +39,8 @@ public class MyCryptoTool {
 			i++;
 		}
 		is.close();
-		return md.digest(Arrays.copyOf(data, i));
+		md.update(Arrays.copyOf(data, i));
+		return md ;
 	}
 	
 
@@ -62,22 +72,30 @@ public class MyCryptoTool {
 		
 		MyCryptoTool crypto = new MyCryptoTool();
 		
-		System.out.println("----------------");
-		crypto.Question51(4);
-		crypto.Question51(8);
-		System.out.println("----------------");
-		crypto.Question51(12);
-		crypto.Question51(16);
-		System.out.println("----------------");
-		crypto.Question51(36);
-		crypto.Question51(40);
+		System.out.println("* Questão 5.1");
+		System.out.println("Para 8 bits");
+		crypto.printHashes(8);
+		System.out.println("Para 14 bits");
+		crypto.printHashes(16);
+		System.out.println("Para 32 bits");
+		crypto.printHashes(32);
 		
+		System.out.println("* Questão 5.2");
 		
-		
+		int nOperations8 = 0, nOperations12 = 0, nOperations16 = 0, n = 0;
+		while (n<10) {
+			nOperations8 += crypto.findEqualHash(8);
+			nOperations12 += crypto.findEqualHash(12) ;
+			nOperations16 += crypto.findEqualHash(16);
+			n+=1;
+		}
+		System.out.println("Média de operações para 08 bits: " + nOperations8/10);
+		System.out.println("Média de operações para 12 bits: "+ nOperations12/10);
+		System.out.println("Média de operações para 16 bits: "+ nOperations16/10);
 		
 	}
 	
-	private void Question51( int nBits) 
+	private void printHashes( int nBits) 
 	{
 		System.out.print("GoodApp Hash: ");
 		for (byte b : this.read(nBits,hashGood))
@@ -92,4 +110,25 @@ public class MyCryptoTool {
 		}
 		System.out.println();
 	}
+	
+	private int findEqualHash(int nBits) throws NoSuchAlgorithmException, IOException {
+		MessageDigest mdBadApp ;
+		int nOperations = 0;
+		byte[] input = new byte[4096];
+		Random r = new Random(System.currentTimeMillis());
+
+		while (!(Arrays.equals(read(nBits,hashGood),read(nBits,hashBad)))) {
+			mdBadApp = produceMessageDigest("C:\\BadApp.java") ;
+			r.nextBytes(input);
+			input[0] = '/'; input[1] = '/';
+			mdBadApp.update(input);
+			hashBad = mdBadApp.digest() ;
+			nOperations += 1 ;
+		}
+		
+		
+		
+		return nOperations ;
+	}
+	
 }
