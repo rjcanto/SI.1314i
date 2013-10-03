@@ -49,18 +49,26 @@ public class MyCryptoTool {
 	public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
 		
 		MyCryptoTool crypto = new MyCryptoTool();
-		int nBytes = 1 ;
+		crypto.Question51(1);
+		crypto.Question51(2);
+		crypto.Question51(4);
 		
+		
+	}
+	
+	private void Question51( int nBytes) 
+	{
 		System.out.print("GoodApp Hash: ");
-		for (byte b : crypto.readGood(nBytes))
+		for (byte b : this.readGood(nBytes))
 		{
 			System.out.printf("%x", b);
 		}
 		System.out.print("\nBadApp Hash: ");
-		for (byte b : crypto.readBad(nBytes))
+		for (byte b : this.readBad(nBytes))
 		{
 			System.out.printf("%x", b);
-		}
-	}
 	
+		}
+		System.out.println();
+	}
 }
