@@ -1,11 +1,8 @@
 package Exerc6;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -37,15 +34,15 @@ public class MyCryptoTool {
 	}
 	
 	private byte[] readGood(int nBytes){
-		return hashGood;
-		//return Arrays.copyOf(hashGood, nBytes);
+		//return hashGood;
+		return Arrays.copyOf(hashGood, nBytes);
 		
 	}
 	
 	private byte[] readBad(int nBytes){
 		
-		return hashBad;
-		//return Arrays.copyOf(hashBad, nBytes);
+		//return hashBad;
+		return Arrays.copyOf(hashBad, nBytes);
 			
 	}
 	
@@ -59,6 +56,11 @@ public class MyCryptoTool {
 		{
 			System.out.printf("%x", b);
 		}
-		System.out.println("BadApp Hash: " + crypto.readBad(nBytes).toString()) ;
+		System.out.print("\nBadApp Hash: ");
+		for (byte b : crypto.readBad(nBytes))
+		{
+			System.out.printf("%x", b);
+		}
 	}
+	
 }
