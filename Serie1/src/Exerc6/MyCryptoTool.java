@@ -33,19 +33,7 @@ public class MyCryptoTool {
 		return md.digest(Arrays.copyOf(data, i));
 	}
 	
-	private byte[] readGood(int nBytes){
-		//return hashGood;
-		return Arrays.copyOf(hashGood, nBytes);
-		
-	}
-	
-	private byte[] readBad(int nBytes){
-		
-		//return hashBad;
-		return Arrays.copyOf(hashBad, nBytes);
-			
-	}
-	
+
 	private byte[] read(int nBits, byte[] h) {
 		int nFullBytes = nBits / 8;
 		byte[] result ;
@@ -58,11 +46,14 @@ public class MyCryptoTool {
 			if(remainingBits==0)
 				return result;
 		
-			result[nFullBytes+1] = (byte) (h[nFullBytes] >> (8-remainingBits));
+			//Para shiftar é necessário converter para int e colocar a zero todos os octetos
+			//excepto o primeiro
+			int x = ((int) h[nFullBytes]) & 0xFF;
+			result[nFullBytes] = (byte) (x >> (8-remainingBits));
 			return result;
 		}
-		
-		result[0] = (byte) (h[0] >> (nBits));
+		int x = ((int) h[0]) & 0xFF;
+		result[0] = (byte) (x >> (nBits));
 		return result ;
 		
 	}
@@ -70,9 +61,19 @@ public class MyCryptoTool {
 	public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
 		
 		MyCryptoTool crypto = new MyCryptoTool();
+		
+		System.out.println("----------------");
+		crypto.Question51(4);
 		crypto.Question51(8);
+		System.out.println("----------------");
+		crypto.Question51(12);
 		crypto.Question51(16);
-		crypto.Question51(32);
+		System.out.println("----------------");
+		crypto.Question51(36);
+		crypto.Question51(40);
+		
+		
+		
 		
 	}
 	
