@@ -123,9 +123,6 @@ public class MyCryptoTool {
 			hashBad = mdBadApp.digest() ;
 			nOperations += 1 ;
 		}
-		
-		
-		
 		return nOperations ;
 	}
 	
