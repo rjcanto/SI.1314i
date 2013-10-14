@@ -1,4 +1,4 @@
-package Exerc6;
+package Exerc5;
 
 import java.io.FileInputStream;
 import java.io.IOException;
