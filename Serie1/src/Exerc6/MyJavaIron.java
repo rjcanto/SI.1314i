@@ -1,7 +1,10 @@
 package Exerc6;
 
+import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 
 /**
  * 
@@ -21,10 +24,13 @@ public class MyJavaIron {
 	}
 	
 	public Cipher builtCipher(String obg, String op, int keyLen) {
+		Cipher c ;
 		return null;
 	}
 	
-	public SecretKey generate(String password, IronOptions options) {
+	public SecretKey generate(String password, IronOptions options) throws NoSuchAlgorithmException {
+		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2");
+		SecretKey k =f.generateSecret();
 		return null ;
 	}
 	
