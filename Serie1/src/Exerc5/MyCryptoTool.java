@@ -9,12 +9,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MyCryptoTool {
-	private byte[] hashGood ;
-	private byte[] hashBad ;
+	//private byte[] hashGood ;
+	//private byte[] hashBad ;
 	
 	public MyCryptoTool() throws NoSuchAlgorithmException, IOException{
-		hashGood = produceHash("c:\\GoodApp.java");
-		hashBad = produceHash("c:\\BadApp.java");
+	//	hashGood = produceHash("c:\\GoodApp.java");
+	//	hashBad = produceHash("c:\\BadApp.java");
 		
 	}
 	
@@ -72,11 +72,11 @@ public class MyCryptoTool {
 		
 		System.out.println("**** Questão 5.1");
 		System.out.println("Para 8 bits");
-		crypto.printHashes(8);
+		crypto.findHashes(8);
 		System.out.println("Para 14 bits");
-		crypto.printHashes(16);
+		crypto.findHashes(16);
 		System.out.println("Para 32 bits");
-		crypto.printHashes(32);
+		crypto.findHashes(32);
 		
 		System.out.println("**** Questão 5.2");
 		
@@ -94,20 +94,23 @@ public class MyCryptoTool {
 		
 		System.out.println("**** Questão 5.3");
 		
-		n = 0;
-		while (n<10) {
+		nOperationsFirst = 0; nOperationsSecond = 0; nOperationsThird = 0; n = 0;
+		while (n<1) {
 			nOperationsFirst += crypto.findEqualHash2(8);
 			nOperationsSecond += crypto.findEqualHash2(16) ;
 			nOperationsThird += crypto.findEqualHash2(32);
 			n+=1;
 		}
-		System.out.println("Média de operações para 08 bits: " + nOperationsFirst/10);
-		System.out.println("Média de operações para 16 bits: "+ nOperationsSecond/10);
-		System.out.println("Média de operações para 32 bits: "+ nOperationsThird/10);
+		System.out.println("Média de operações para 08 bits: " + nOperationsFirst/n);
+		System.out.println("Média de operações para 16 bits: "+ nOperationsSecond/n);
+		System.out.println("Média de operações para 32 bits: "+ nOperationsThird/n);
 	}
 	
-	private void printHashes( int nBits) 
+	private void findHashes( int nBits) throws NoSuchAlgorithmException, IOException 
 	{
+		byte[] hashGood = produceHash("c:\\GoodApp.java");
+		byte[] hashBad = produceHash("c:\\BadApp.java");
+		
 		System.out.print("GoodApp Hash: ");
 		for (byte b : this.read(nBits,hashGood))
 		{
@@ -127,7 +130,10 @@ public class MyCryptoTool {
 		int nOperations = 0;
 		byte[] input = new byte[4096];
 		Random r = new Random(System.currentTimeMillis());
-
+		
+		byte[] hashGood = produceHash("c:\\GoodApp.java");
+		byte[] hashBad = produceHash("c:\\BadApp.java");
+		
 		while (!(Arrays.equals(read(nBits,hashGood),read(nBits,hashBad)))) {
 			mdBadApp = produceMessageDigest("C:\\BadApp.java") ;
 			r.nextBytes(input);
@@ -144,6 +150,9 @@ public class MyCryptoTool {
 		int nOperations = 0;
 		byte[] inputBadApp = new byte[4096];
 		byte[] inputGoodApp = new byte[4096];
+		byte[] hashGood = produceHash("c:\\GoodApp.java");
+		byte[] hashBad = produceHash("c:\\BadApp.java");
+		
 		Random r = new Random(System.currentTimeMillis());
 
 		while (!(Arrays.equals(read(nBits,hashGood),read(nBits,hashBad)))) {
@@ -161,7 +170,7 @@ public class MyCryptoTool {
 			hashGood = mdGoodApp.digest() ;
 			
 			nOperations += 1 ;
-		}
+		} 
 		return nOperations ;
 	}
 	
