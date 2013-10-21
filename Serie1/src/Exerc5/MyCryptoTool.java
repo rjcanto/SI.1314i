@@ -70,7 +70,7 @@ public class MyCryptoTool {
 		
 		MyCryptoTool crypto = new MyCryptoTool();
 		
-		System.out.println("* Questão 5.1");
+		System.out.println("**** Questão 5.1");
 		System.out.println("Para 8 bits");
 		crypto.printHashes(8);
 		System.out.println("Para 14 bits");
@@ -78,19 +78,32 @@ public class MyCryptoTool {
 		System.out.println("Para 32 bits");
 		crypto.printHashes(32);
 		
-		System.out.println("* Questão 5.2");
+		System.out.println("**** Questão 5.2");
 		
-		int nOperations8 = 0, nOperations12 = 0, nOperations16 = 0, n = 0;
+		int nOperationsFirst = 0, nOperationsSecond = 0, nOperationsThird = 0, n = 0;
 		while (n<10) {
-			nOperations8 += crypto.findEqualHash(8);
-			nOperations12 += crypto.findEqualHash(12) ;
-			nOperations16 += crypto.findEqualHash(16);
+			nOperationsFirst += crypto.findEqualHash(8);
+			nOperationsSecond += crypto.findEqualHash(12) ;
+			nOperationsThird += crypto.findEqualHash(16);
 			n+=1;
 		}
-		System.out.println("Média de operações para 08 bits: " + nOperations8/10);
-		System.out.println("Média de operações para 12 bits: "+ nOperations12/10);
-		System.out.println("Média de operações para 16 bits: "+ nOperations16/10);
+		System.out.println("Média de operações para 08 bits: " + nOperationsFirst/10);
+		System.out.println("Média de operações para 12 bits: "+ nOperationsSecond/10);
+		System.out.println("Média de operações para 16 bits: "+ nOperationsThird/10);
 		
+		
+		System.out.println("**** Questão 5.3");
+		
+		n = 0;
+		while (n<10) {
+			nOperationsFirst += crypto.findEqualHash2(8);
+			nOperationsSecond += crypto.findEqualHash2(16) ;
+			nOperationsThird += crypto.findEqualHash2(32);
+			n+=1;
+		}
+		System.out.println("Média de operações para 08 bits: " + nOperationsFirst/10);
+		System.out.println("Média de operações para 16 bits: "+ nOperationsSecond/10);
+		System.out.println("Média de operações para 32 bits: "+ nOperationsThird/10);
 	}
 	
 	private void printHashes( int nBits) 
@@ -121,6 +134,32 @@ public class MyCryptoTool {
 			input[0] = '/'; input[1] = '/';
 			mdBadApp.update(input);
 			hashBad = mdBadApp.digest() ;
+			nOperations += 1 ;
+		}
+		return nOperations ;
+	}
+	
+	private int findEqualHash2(int nBits) throws NoSuchAlgorithmException, IOException {
+		MessageDigest mdBadApp, mdGoodApp ;
+		int nOperations = 0;
+		byte[] inputBadApp = new byte[4096];
+		byte[] inputGoodApp = new byte[4096];
+		Random r = new Random(System.currentTimeMillis());
+
+		while (!(Arrays.equals(read(nBits,hashGood),read(nBits,hashBad)))) {
+			mdBadApp = produceMessageDigest("C:\\BadApp.java") ;
+			r.nextBytes(inputBadApp);
+			inputBadApp[0] = '/'; inputBadApp[1] = '/';
+			mdBadApp.update(inputBadApp);
+			hashBad = mdBadApp.digest() ;
+			
+			
+			mdGoodApp = produceMessageDigest("C:\\GoodApp.java") ;
+			r.nextBytes(inputGoodApp);
+			inputBadApp[0] = '/'; inputGoodApp[1] = '/';
+			mdGoodApp.update(inputGoodApp);
+			hashGood = mdGoodApp.digest() ;
+			
 			nOperations += 1 ;
 		}
 		return nOperations ;
