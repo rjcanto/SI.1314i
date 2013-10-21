@@ -95,10 +95,10 @@ public class MyCryptoTool {
 		System.out.println("**** Questão 5.3");
 		
 		nOperationsFirst = 0; nOperationsSecond = 0; nOperationsThird = 0; n = 0;
-		while (n<1) {
+		while (n<10) {
 			nOperationsFirst += crypto.findEqualHash2(8);
 			nOperationsSecond += crypto.findEqualHash2(16) ;
-			nOperationsThird += crypto.findEqualHash2(32);
+			//nOperationsThird += crypto.findEqualHash2(32);
 			n+=1;
 		}
 		System.out.println("Média de operações para 08 bits: " + nOperationsFirst/n);
@@ -129,18 +129,20 @@ public class MyCryptoTool {
 		MessageDigest mdBadApp ;
 		int nOperations = 0;
 		byte[] input = new byte[4096];
+		
 		Random r = new Random(System.currentTimeMillis());
+		r.nextBytes(input);
+		input[0] = '/'; input[1] = '/';
 		
 		byte[] hashGood = produceHash("c:\\GoodApp.java");
 		byte[] hashBad = produceHash("c:\\BadApp.java");
 		
 		while (!(Arrays.equals(read(nBits,hashGood),read(nBits,hashBad)))) {
 			mdBadApp = produceMessageDigest("C:\\BadApp.java") ;
-			r.nextBytes(input);
-			input[0] = '/'; input[1] = '/';
 			mdBadApp.update(input);
 			hashBad = mdBadApp.digest() ;
 			nOperations += 1 ;
+			r.nextBytes(input);
 		}
 		return nOperations ;
 	}
@@ -148,8 +150,8 @@ public class MyCryptoTool {
 	private int findEqualHash2(int nBits) throws NoSuchAlgorithmException, IOException {
 		MessageDigest mdBadApp, mdGoodApp ;
 		int nOperations = 0;
-		byte[] inputBadApp = new byte[4096];
-		byte[] inputGoodApp = new byte[4096];
+		byte[] inputBadApp = new byte[8];
+		byte[] inputGoodApp = new byte[8];
 		byte[] hashGood = produceHash("c:\\GoodApp.java");
 		byte[] hashBad = produceHash("c:\\BadApp.java");
 		
@@ -161,7 +163,6 @@ public class MyCryptoTool {
 			inputBadApp[0] = '/'; inputBadApp[1] = '/';
 			mdBadApp.update(inputBadApp);
 			hashBad = mdBadApp.digest() ;
-			
 			
 			mdGoodApp = produceMessageDigest("C:\\GoodApp.java") ;
 			r.nextBytes(inputGoodApp);
