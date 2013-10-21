@@ -156,7 +156,7 @@ public class MyCryptoTool {
 			
 			mdGoodApp = produceMessageDigest("C:\\GoodApp.java") ;
 			r.nextBytes(inputGoodApp);
-			inputBadApp[0] = '/'; inputGoodApp[1] = '/';
+			inputGoodApp[0] = '/'; inputGoodApp[1] = '/';
 			mdGoodApp.update(inputGoodApp);
 			hashGood = mdGoodApp.digest() ;
 			
