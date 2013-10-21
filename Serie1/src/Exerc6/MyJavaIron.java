@@ -27,7 +27,7 @@ public class MyJavaIron {
 		Cipher c ;
 		return null;
 	}
-	/*teste*/
+
 	public SecretKey generate(String password, IronOptions options) throws NoSuchAlgorithmException {
 		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2");
 		SecretKey k =f.generateKey();
