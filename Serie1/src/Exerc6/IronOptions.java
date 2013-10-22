@@ -8,7 +8,16 @@ public class IronOptions {
 	//Operation Mode
 	static final int CBC=0, CTR=1;
 
+	
+	protected int saltBits;
+    protected byte[] salt;
+    protected String algorithm;
+    protected int iterations;
+    protected byte[] iv;
+    	
 	public IronOptions() {
+		saltBits = 256;
+		salt = new byte[20];
 		
 	}
 }
