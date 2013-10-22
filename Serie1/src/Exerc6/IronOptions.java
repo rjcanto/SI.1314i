@@ -18,6 +18,7 @@ public class IronOptions {
 	public IronOptions() {
 		saltBits = 256;
 		salt = new byte[20];
+		iterations=1;
 		
 	}
 }
