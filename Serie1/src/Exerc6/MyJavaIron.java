@@ -78,8 +78,32 @@ public class MyJavaIron {
 	}
 	
 	
-	public String decrypt(SecretKey k, IronOptions options) {
-		return null;
+	public String decrypt(SecretKey k, String sealed) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
+		IronOptions ioDecrypt = new IronOptions();
+		String[] parts = sealed.split("*");
+		
+		if (parts.length != 8) {
+	        throw new IllegalArgumentException();
+	    }
+		
+		String macPrefix = parts[0];
+		String passwordId = parts[1];
+		String encryptionSalt = parts[2];
+		String encryptionIv = parts[3];
+		String encryptedB64 = parts[4];
+		String expiration = parts[5];
+		String hmacSalt = parts[6];
+		String hmac = parts[7];
+		String macBaseString = macPrefix + '*' + passwordId + '*' + encryptionSalt + '*' + encryptionIv + '*' + encryptedB64 + '*' + expiration;
+		
+		byte[] encrypted = Base64.decodeBase64(encryptedB64);
+		byte[] iv = Base64.decodeBase64(encryptionIv); 
+		ioDecrypt.salt = encryptionSalt.getBytes();
+		
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		cipher.init(Cipher.DECRYPT_MODE, k, new SecureRandom());
+			
+		return new String(cipher.doFinal(encrypted),"UTF-8");
 	}
 	
 	public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidParameterSpecException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidAlgorithmParameterException {
@@ -89,7 +113,10 @@ public class MyJavaIron {
 		
 		MyJavaIron iron = new MyJavaIron() ;
 		IronOptions io = new IronOptions();
-		 
-		System.out.println(iron.encrypt(iron.generate(password,io), io, jsonObj));
+		SecretKey myKey =iron.generate(password,io);
+		String sealed =iron.encrypt(myKey, io, jsonObj) ;
+		System.out.println(sealed);
+		
+		System.out.println(iron.decrypt(myKey, sealed));
 	}
 }
