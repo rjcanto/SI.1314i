@@ -67,14 +67,14 @@ public class MyJavaIron {
 		
 		String sealed =
 				macPrefix + "**" +
-				Base64.encodeBase64String(options.salt) + "*" +
-				Base64.encodeBase64String(iv) + "*" +		
-				Base64.encodeBase64String(ciphertext) + "**";
+				Base64.encodeBase64URLSafeString(options.salt) + "*" +
+				Base64.encodeBase64URLSafeString(iv) + "*" +		
+				Base64.encodeBase64URLSafeString(ciphertext) + "**";
 		
 		Random hmacRandom = new SecureRandom(sealed.getBytes());
 		hmacRandom.nextBytes(hmac) ;
 		
-		return sealed + Base64.encodeBase64String(hmacSalt) + "*" + Base64.encodeBase64String(hmac);
+		return sealed + Base64.encodeBase64URLSafeString(hmacSalt) + "*" + Base64.encodeBase64URLSafeString(hmac);
 	}
 	
 	
