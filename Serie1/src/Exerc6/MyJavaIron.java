@@ -20,7 +20,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.codec.binary.Base64;
+import sun.misc.BASE64Encoder;
 
 /**
  * 
@@ -63,18 +63,20 @@ public class MyJavaIron {
 		cipher.init(Cipher.ENCRYPT_MODE, k, new SecureRandom());
 		byte[] iv = cipher.getIV();
 		
-		byte[] ciphertext = cipher.doFinal(data.getBytes());		
+		byte[] ciphertext = cipher.doFinal(data.getBytes());
+		
+		BASE64Encoder encoder = new BASE64Encoder();
 		
 		String sealed =
 				macPrefix + "**" +
-				Base64.encodeBase64String(options.salt) + "*" +
-				Base64.encodeBase64String(iv) + "*" +		
-				Base64.encodeBase64String(ciphertext) + "**";
+				encoder.encode(options.salt) + "*" +
+				encoder.encode(iv) + "*" +		
+				encoder.encode(ciphertext) + "**";
 		
 		Random hmacRandom = new SecureRandom(sealed.getBytes());
 		hmacRandom.nextBytes(hmac) ;
 		
-		return sealed + Base64.encodeBase64String(hmacSalt) + "*" + Base64.encodeBase64String(hmac);
+		return sealed + encoder.encode(hmacSalt) + "*" + encoder.encode(hmac);
 	}
 	
 	
