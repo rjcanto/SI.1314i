@@ -24,6 +24,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import sun.misc.BASE64Encoder;
+
 import com.sun.xml.internal.messaging.saaj.util.Base64;
 
 /**
@@ -41,25 +43,25 @@ public class MyJavaIron {
 	}
 	
 	public SecretKey generate(String password, IronOptions options) throws NoSuchAlgorithmException, InvalidKeySpecException, UnsupportedEncodingException {
-		//SecretKeyFactory f = SecretKeyFactory.getInstance("AES");
+		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHMacSHA1");
 		Random r = new SecureRandom();
 		r.nextBytes(options.salt); 
 		//byte[] key = new byte[20];
-		/*
+		
 		
 		KeySpec spec = new PBEKeySpec(password.toCharArray(),
 										options.salt,
 										options.iterations,
 										options.saltBits
 									);
-		SecretKey k =f.generateSecret(spec);
-		return new SecretKeySpec(k.getEncoded(),"AES");
-		*/
-		MessageDigest digester = MessageDigest.getInstance("SHA-256");
-		digester.update(password.getBytes("UTF-8"));
-		byte[] key = digester.digest();
+		SecretKey k = f.generateSecret(spec);
+		return new SecretKeySpec(k.getEncoded(), "AES");
+		
+		//MessageDigest digester = MessageDigest.getInstance("SHA-256");
+		//digester.update(password.getBytes("UTF-8"));
+		//byte[] key = digester.digest();
 		//System.out.println(key.length);
-		return new SecretKeySpec(key,"AES");
+		//return new SecretKeySpec(key,"AES");
 	}
 	
 	public byte[] encrypt(SecretKey k, IronOptions options, String data) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, InvalidParameterSpecException, InvalidAlgorithmParameterException {
@@ -73,18 +75,20 @@ public class MyJavaIron {
 		r.nextBytes(hmacSalt);
 		
 
-		 AlgorithmParameters algParams;
+		/*AlgorithmParameters algParams;
 	    algParams = AlgorithmParameters.getInstance("AES");
-
-
+	    algParams.init(new IvParameterSpec(new byte[] {));
+		*/
 		
-		Cipher cipher = Cipher.getInstance("AES");
-		cipher.init(Cipher.ENCRYPT_MODE, k,algParams);
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		cipher.init(Cipher.ENCRYPT_MODE, k, new SecureRandom());
+		byte[] iv = cipher.getIV();
 		//AlgorithmParameters params = cipher.getParameters();
 		//byte[] iv = params.getParameterSpec(IvParameterSpec.class).getIV();
-		byte[] iv = algParams.getParameterSpec(IvParameterSpec.class).getIV();
+		//byte[] iv = algParams.getParameterSpec(IvParameterSpec.class).getIV();
 		byte[] ciphertext = cipher.doFinal(data.getBytes());
-		byte[] encryptedB64 = Base64.encode(ciphertext);
+		BASE64Encoder encoder = new BASE64Encoder();
+		byte[] encryptedB64 = encoder.encode(ciphertext).getBytes();
 		
 		sealedObjStream.write(macPrefix.getBytes());
 		sealedObjStream.write("**".getBytes());
