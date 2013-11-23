@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebForm1.aspx.cs" Inherits="WebApplication1.WebForm1" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IdentityProvider.aspx.cs" Inherits="Serie2_IdentityProvider.WebForm1" %>
 
 <!DOCTYPE html>
 
