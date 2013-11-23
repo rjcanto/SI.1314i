@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -14,9 +15,11 @@ import java.util.Random;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -55,7 +58,7 @@ public class MyJavaIron {
 		byte[] hmacSalt = new byte[10] ;
 		byte[] hmac = new byte[10] ;		
 		
-		String macPrefix = "fe26.2" ;
+		String macPrefix = "Fe26.2" ;
 		
 		r.nextBytes(hmacSalt);
 
@@ -69,18 +72,24 @@ public class MyJavaIron {
 				macPrefix + "**" +
 				Base64.encodeBase64URLSafeString(options.salt) + "*" +
 				Base64.encodeBase64URLSafeString(iv) + "*" +		
-				Base64.encodeBase64URLSafeString(ciphertext) + "**";
+				Base64.encodeBase64URLSafeString(ciphertext) + "*";
 		
 		Random hmacRandom = new SecureRandom(sealed.getBytes());
 		hmacRandom.nextBytes(hmac) ;
 		
-		return sealed + Base64.encodeBase64URLSafeString(hmacSalt) + "*" + Base64.encodeBase64URLSafeString(hmac);
+		Mac m = Mac.getInstance("HmacSHA256");
+		m.init(k);
+		m.update(sealed.getBytes());
+		
+		String hmacDigest = Base64.encodeBase64URLSafeString(m.doFinal()).replaceAll("/\\+/g", "-").replaceAll("/\\//g", "_").replaceAll("/\\=/g", "");
+		
+		return sealed + "*" + Base64.encodeBase64URLSafeString(options.salt) + "*" + hmacDigest;
 	}
 	
 	
-	public String decrypt(SecretKey k, String sealed) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
+	public String decrypt(SecretKey k, String sealed) throws IllegalBlockSizeException, BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidAlgorithmParameterException {
 		IronOptions ioDecrypt = new IronOptions();
-		String[] parts = sealed.split("*");
+		String[] parts = sealed.split("\\*");
 		
 		if (parts.length != 8) {
 	        throw new IllegalArgumentException();
@@ -101,9 +110,9 @@ public class MyJavaIron {
 		ioDecrypt.salt = encryptionSalt.getBytes();
 		
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-		cipher.init(Cipher.DECRYPT_MODE, k, new SecureRandom());
+		cipher.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(iv));
 			
-		return new String(cipher.doFinal(encrypted),"UTF-8");
+		return new String(cipher.doFinal(encrypted), "UTF-8");
 	}
 	
 	public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, InvalidParameterSpecException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidAlgorithmParameterException {
@@ -113,8 +122,8 @@ public class MyJavaIron {
 		
 		MyJavaIron iron = new MyJavaIron() ;
 		IronOptions io = new IronOptions();
-		SecretKey myKey =iron.generate(password,io);
-		String sealed =iron.encrypt(myKey, io, jsonObj) ;
+		SecretKey myKey = iron.generate(password,io);
+		String sealed = iron.encrypt(myKey, io, jsonObj) ;
 		System.out.println(sealed);
 		
 		System.out.println(iron.decrypt(myKey, sealed));
