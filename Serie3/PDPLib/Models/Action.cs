@@ -5,7 +5,9 @@ using System.Web;
 
 namespace PDP.Models
 {
-    public class Actions
+    public class Action
     {
+        public int ActionId { get; set; }
+        public String ActionName { get; set; }
     }
 }
