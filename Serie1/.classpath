@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/lbras/ISEL/SI/Workspace/SI.1314i/Serie1/commons-codec-1.8.jar"/>
+	<classpathentry kind="lib" path="D:/Dropbox/Isel/SI1314i/Workspace/SI.1314i/Serie1/commons-codec-1.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
