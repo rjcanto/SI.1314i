@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IdentityProvider.aspx.cs" Inherits="Serie2_IdentityProvider.WebForm1" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IdentityProvider.aspx.cs" Inherits="Serie2_IdentityProvider.WebForm1"%>
 
 <!DOCTYPE html>
 
@@ -9,7 +9,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-    
+    <h1>Identity Provider</h1>
     </div>
     </form>
 </body>
