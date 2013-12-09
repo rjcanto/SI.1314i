@@ -7,5 +7,7 @@ namespace PDP.Models
 {
     public class Resource
     {
+        public int ResourceId { get; set; }
+        public String ResourceName { get; set; }
     }
 }
