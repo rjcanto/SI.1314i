@@ -5,11 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using PDP.Models;
 using Action=PDP.Models.Action;
+using NPoco;
 
 namespace PDPLib
 {
     public class Class1
     {
+        public static IDatabase GetDB()
+        {
+            return new Database("Server=localhost;Database=PDPDB;Trusted_Connection=True;");
+        }
+        
         public List<User> getUsersWithPermission(String permissionName)
         {
             return null;
@@ -39,5 +45,8 @@ namespace PDPLib
         {
             return false;
         }
+
+
+
     }
 }
