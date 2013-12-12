@@ -11,16 +11,18 @@ namespace PDPLib
 {
     public class PDP
     {
+        public static string ConnStringName { get; set; }
+
         public static IDatabase GetDB()
         {
-            return new Database("Server=localhost\\SQLEXPRESS;Database=PDPDB;Trusted_Connection=True;");
+            return new Database(ConnStringName);
         }
         
         public List<User> getUsersWithPermission(String permissionName)
         {
             using (IDatabase db = GetDB())
             {
-                return db.Fetch<User>("select userName from User");
+                return db.Fetch<User>("select * from User");
             }
             
         }
