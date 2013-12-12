@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PDP.Models;
-using Action=PDP.Models.Action;
+using PDPLib.Models;
+using Action = PDPLib.Models.Action;
 using NPoco;
 
 namespace PDPLib
 {
-    public class Class1
+    public class PDP
     {
         public static IDatabase GetDB()
         {
-            return new Database("Server=localhost;Database=PDPDB;Trusted_Connection=True;");
+            return new Database("Server=localhost\\SQLEXPRESS;Database=PDPDB;Trusted_Connection=True;");
         }
         
         public List<User> getUsersWithPermission(String permissionName)
         {
-            return null;
+            using (IDatabase db = GetDB())
+            {
+                return db.Fetch<User>("select userName from User");
+            }
+            
         }
 
         public List<User> getUsersWithRole(String roleName)

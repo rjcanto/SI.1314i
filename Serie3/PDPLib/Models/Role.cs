@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PDP.Models
+namespace PDPLib.Models
 {
     public class Role
     {

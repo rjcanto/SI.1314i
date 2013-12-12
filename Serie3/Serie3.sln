@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDPLib", "PDPLib\PDPLib.csproj", "{53B18B2B-A648-4341-B0A0-0BC7A4005929}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDPLibTest", "PDPLibTest\PDPLibTest.csproj", "{EEDA1717-BC6A-4901-A770-7B960FAAB04B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{53B18B2B-A648-4341-B0A0-0BC7A4005929}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53B18B2B-A648-4341-B0A0-0BC7A4005929}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53B18B2B-A648-4341-B0A0-0BC7A4005929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEDA1717-BC6A-4901-A770-7B960FAAB04B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEDA1717-BC6A-4901-A770-7B960FAAB04B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEDA1717-BC6A-4901-A770-7B960FAAB04B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEDA1717-BC6A-4901-A770-7B960FAAB04B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
