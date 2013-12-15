@@ -10,12 +10,16 @@ GO
 USE PDPDB;
 
 -- DROP
+if OBJECT_ID('RolePermissions') is not null
+	drop table [RolePermissions];
+if OBJECT_ID('UserRoles') is not null
+	drop table [UserRoles];
 if OBJECT_ID('Action') is not null
 	drop table [Action];
 if OBJECT_ID('Permission') is not null
 	drop table [Permission];
 if OBJECT_ID('Resource') is not null
-	drop table [Resouce];
+	drop table [Resource];
 if OBJECT_ID('Role') is not null
 	drop table [Role];
 if OBJECT_ID('User') is not null
@@ -35,7 +39,9 @@ CREATE TABLE [Role]
 	(
 	roleId int IDENTITY,		
 	rolename varchar(64) UNIQUE,
-	constraint PK_roleId primary key (roleId)
+	parentRoleId int,
+	constraint PK_roleId primary key (roleId),
+	constraint FK_Role_parentRoleId foreign key(parentRoleId) references [Role](roleId)
 	);
 GO
 
@@ -60,5 +66,25 @@ CREATE TABLE [Action]
 	actionId int IDENTITY,		
 	actionName varchar(64) UNIQUE,
 	constraint PK_actionId primary key (actionId)
+	);
+GO
+
+CREATE TABLE UserRoles
+	(
+	userId int,		
+	roleId int,
+	constraint PK_UserRoles primary key (userId, roleId),
+	constraint FK_UserRoles_userId foreign key(userId) references [User](userId),
+	constraint FK_UserRoles_roleId foreign key(roleId) references [Role](roleId)
+	);
+GO
+
+CREATE TABLE RolePermissions
+	(
+	roleId int,
+	permissionId int,
+	constraint PK_RolePermissions primary key (roleId, permissionId),	
+	constraint FK_RolePermissions_roleId foreign key(roleId) references [Role](roleId),
+	constraint FK_RolePermissions_userId foreign key(permissionId) references [Permission](permissionId)
 	);
 GO

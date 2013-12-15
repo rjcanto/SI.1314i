@@ -22,7 +22,7 @@ namespace PDPLib
         {
             using (IDatabase db = GetDB())
             {
-                return db.Fetch<User>("select * from user");
+                return db.Fetch<User>("select userId, username from [user]");
             }
             
         }
