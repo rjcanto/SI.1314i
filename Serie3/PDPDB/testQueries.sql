@@ -13,10 +13,13 @@ WHERE (PermissionAssignment.actionID = '3' AND PermissionAssignment.resourceId =
 SELECT [User].*
 FROM [User] INNER JOIN UserAssignment
 ON ([User].userID = UserAssignment.userID)
-WHERE UserAssignment.ROLE_ID = ;
+WHERE UserAssignment.roleId = '4';
 
 --getRolesOfUser
 SELECT Role.*
 FROM Role INNER JOIN UserAssignment
-ON ([User].userID = UserAssignment.userID)
-WHERE UserAssignment.roleID = ;
+ON (Role.roleId = UserAssignment.roleId)
+INNER JOIN [User]
+ON ([User].userId = UserAssignment.userID)
+WHERE [User].username = 'Ricardo' ;
+
