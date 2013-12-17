@@ -18,6 +18,7 @@ namespace PDPLibTest
             {
                 Console.WriteLine(u.ToString());
             }
+            Console.ReadKey();
         }
     }
 }
