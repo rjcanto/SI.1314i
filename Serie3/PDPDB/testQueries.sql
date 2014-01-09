@@ -57,9 +57,9 @@ INNER JOIN Role
 ON (UserAssignment.roleId = Role.roleId)
 INNER JOIN PermissionAssignment
 ON (PermissionAssignment.roleId = Role.roleId)
-WHERE (PermissionAssignment.resourceId = 2 
-AND PermissionAssignment.actionId = 2 
-AND [User].username = 'Elsa');
+WHERE (PermissionAssignment.resourceId = 1 
+AND PermissionAssignment.actionId = 5
+AND [User].username = 'Ricardo');
 
 
 --Get Roles with recursivity
@@ -95,3 +95,29 @@ FROM
     INNER JOIN Role r2 ON r2.roleId = rh.JuniorRoleId
 ORDER BY
     [Level], SeniorRole
+
+-----------------------
+-- Recursive Queries --
+-----------------------
+
+
+--isActionAllowedOfUserWithResource
+SELECT 
+	Role.* 
+FROM 
+	Role
+	INNER JOIN RoleHierarchy ON Role.roleId = RoleHierarchy.juniorRoleId
+WHERE
+	RoleHierarchy.roleId = 3
+
+
+SELECT [User].*
+FROM [User] INNER JOIN UserAssignment
+ON ([User].userId = UserAssignment.userId)
+INNER JOIN Role
+ON (UserAssignment.roleId = Role.roleId)
+INNER JOIN PermissionAssignment
+ON (PermissionAssignment.roleId = Role.roleId)
+WHERE (PermissionAssignment.resourceId = 2 
+AND PermissionAssignment.actionId = 2 
+AND [User].username = 'Elsa');
