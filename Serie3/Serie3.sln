@@ -5,6 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDPLib", "PDPLib\PDPLib.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDPLibTest", "PDPLibTest\PDPLibTest.csproj", "{EEDA1717-BC6A-4901-A770-7B960FAAB04B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEPLib", "PEPLib\PEPLib.csproj", "{B930E1C2-618D-4F8D-9771-4319F811E2D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEPWebApp", "PEPWebApp\PEPWebApp.csproj", "{A8C9684F-2877-4FB9-AB54-AF1DB5A57F49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,14 @@ Global
 		{EEDA1717-BC6A-4901-A770-7B960FAAB04B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEDA1717-BC6A-4901-A770-7B960FAAB04B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEDA1717-BC6A-4901-A770-7B960FAAB04B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B930E1C2-618D-4F8D-9771-4319F811E2D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B930E1C2-618D-4F8D-9771-4319F811E2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B930E1C2-618D-4F8D-9771-4319F811E2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B930E1C2-618D-4F8D-9771-4319F811E2D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8C9684F-2877-4FB9-AB54-AF1DB5A57F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8C9684F-2877-4FB9-AB54-AF1DB5A57F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8C9684F-2877-4FB9-AB54-AF1DB5A57F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8C9684F-2877-4FB9-AB54-AF1DB5A57F49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
