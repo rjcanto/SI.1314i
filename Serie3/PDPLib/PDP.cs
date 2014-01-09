@@ -13,7 +13,7 @@ namespace PDPLib
     {
         public static string ConnStringName { get; set; }
 
-        public static IDatabase GetDB()
+        internal static IDatabase GetDB()
         {
             return new Database(ConnStringName);
         }
@@ -22,15 +22,16 @@ namespace PDPLib
         {
             using (IDatabase db = GetDB())
             {
-                Action act = db.Single<Action>("where actionname = @0", actionName);
-                Resource res = db.Single<Resource>("where resourcename = @0", resourceName);
-                return db.Fetch<User>("SELECT User.*" +
-                                      "FROM User INNER JOIN UserAssignment" +
-                                      "ON ([User].userId = UserAssignment.userId)" +
-                                      "INNER JOIN PermissionAssignment" +
-                                      "ON (UserAssignment.roleId = PermissionAssignment.roleId)" +
+                Action act = db.SingleOrDefault<Action>("where actionname = @0", actionName);
+                Resource res = db.SingleOrDefault<Resource>("where resourcename = @0", resourceName);
+                return db.Fetch<User>("SELECT [User].* " +
+                                      "FROM [User] INNER JOIN UserAssignment " +
+                                      "ON ([User].userId = UserAssignment.userId) " +
+                                      "INNER JOIN PermissionAssignment " +
+                                      "ON (UserAssignment.roleId = PermissionAssignment.roleId) " +
                                       "WHERE (PermissionAssignment.actionId = @0 AND PermissionAssignment.resourceId = @1)", 
-                                      act.ActionId,res.ResourceId);
+                                      act != null ? (int?)act.ActionId : null,
+                                      res != null ? (int?)res.ResourceId : null);
             }
             
         }
@@ -115,5 +116,12 @@ namespace PDPLib
             }
         }
 
+        public IList<User> GetUsers()
+        {
+            using (IDatabase db = GetDB())
+            {
+                return db.Fetch<User>();
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace PDPLibTest
             PDP.ConnStringName = "Local";
             PDP lib = new PDP();
 
-            foreach (var u in lib.getUsersWithPermission(null))
+            foreach (var u in lib.getUsersWithPermission(null, null))
             {
                 Console.WriteLine(u.ToString());
             }

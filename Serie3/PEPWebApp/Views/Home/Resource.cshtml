@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Resource";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@if (@ViewBag.Username != null)
+{
+    <h2>Página do utilizador @ViewBag.Username</h2>
+}
+else
+{
+    <h2>Páginas de acesso restrito que está autorizado a aceder:</h2>
+}
