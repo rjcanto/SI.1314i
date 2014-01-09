@@ -7,7 +7,7 @@ namespace PDPLib.Models
 {
     public class Permission
     {
-        public int PermissionId { get; set; }
-        public String PermissionName { get; set; }
+        public int ResourceId { get; set; }
+        public String ActionId { get; set; }
     }
 }
