@@ -75,25 +75,31 @@ namespace PDPLib
             }
         }
 
-
-        //TODO getPermissionsOfUser(String userName)
-        //Version 0.1 (does not iterate through the role hierarchy)
         public List<Permission> getPermissionsOfUser(String userName)
         {
             using (IDatabase db = GetDB())
             {
-                return db.Fetch<Permission>("SELECT Permission.*"
-                                    + "FROM Permission INNER JOIN PermissionAssignment"
-                                    + "ON ((Permission.actionId = PermissionAssignment.actionId)"
-                                    + "	AND (Permission.resourceId = PermissionAssignment.resourceId))"
-                                    + "INNER JOIN Role"
-                                    + "ON (PermissionAssignment.roleId = Role.roleId)"
-                                    + "INNER JOIN UserAssignment"
-                                    + "ON (UserAssignment.roleId = Role.roleId)"
-                                    + "INNER JOIN [User]"
-                                    + "ON ([User].userId = UserAssignment.userId)"
-                                    + "WHERE ([User].username = @0);",
-                                      userName);
+                List<Role> list = getRolesOfUser(userName);
+                List<Permission> result = null;
+              
+                foreach (Role r in list) {
+                    List<Permission> tmp = db.Fetch<Permission>("SELECT Permission.*"
+                                        + " FROM Permission INNER JOIN PermissionAssignment"
+                                        + " ON ((Permission.actionId = PermissionAssignment.actionId)"
+                                        + " AND (Permission.resourceId = PermissionAssignment.resourceId))"
+                                        + " INNER JOIN Role"
+                                        + " ON (PermissionAssignment.roleId = Role.roleId)"
+                                        + " INNER JOIN UserAssignment"
+                                        + " ON (UserAssignment.roleId = Role.roleId)"
+                                        + " INNER JOIN [User]"
+                                        + " ON ([User].userId = UserAssignment.userId)"
+                                        + " WHERE (Role.roleId = @0);",
+                                          r.RoleId);
+                    if (result == null)
+                        result = tmp;
+                    else result.AddRange(tmp);
+                }
+                return result;
             }
         }
 
@@ -176,6 +182,8 @@ namespace PDPLib
 
             }
         }
+        
+        public List<Resource> getResourcesOfAuthorizedUser(String userName, String actionName);
 
         //TODO isActionAllowedOfUserWithResource(String actionName, String userName, String resource)
         // Version 0.1 (does not iterate through the role hierarchy)

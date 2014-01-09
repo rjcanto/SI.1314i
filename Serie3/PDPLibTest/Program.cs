@@ -16,7 +16,8 @@ namespace PDPLibTest
             PDP lib = new PDP();
 
             //isActionAllowedOfUserWithResourceTest(lib);
-            getRolesOfUserTest(lib);
+            //getRolesOfUserTest(lib);
+            getPermissionsOfUserTest(lib);
             Console.ReadKey();
         }
 
@@ -43,6 +44,21 @@ namespace PDPLibTest
                 Console.WriteLine("O utilizador {0} tem os seguintes Roles:", userName);
                 foreach (Role r in result)
                     Console.WriteLine("\t {0}", r.RoleName);
+            }
+        }
+
+        static void getPermissionsOfUserTest(PDP lib)
+        {
+            String userName = "Ricardo";
+            List<Permission> result = lib.getPermissionsOfUser(userName);
+
+            if (result == null)
+                Console.WriteLine("O utilizador {0} não tem Permissões", userName);
+            else
+            {
+                Console.WriteLine("O utilizador {0} tem os seguintes permissões:", userName);
+                foreach (Permission p in result)
+                    Console.WriteLine("\t Permissão {0} sobre o recurso {1}.", p.ActionId,p.ResourceId);
             }
         }
     }
