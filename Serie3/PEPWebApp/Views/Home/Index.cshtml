@@ -1,4 +1,5 @@
-﻿@{
+﻿@using PDPLib.Models
+@{
     ViewBag.Title = "Home";
 }
 @section featured {
@@ -16,5 +17,19 @@
 }
 <h3>Instruções:</h3>
 <p>
-    Teste.
+    Consulte a página @Html.ActionLink("Recursos", "Resource") para verificar as páginas de acesso restrito a que tem acesso com o utilizador actual.
+    A lista de recursos autorizados é obtida através do PEP.
+</p>
+<p>
+    A password por omissão de cada utilizador é 1234, existindo os seguintes utilizadores no sistema:
+</p>
+<ul>
+    @foreach (User u in ViewBag.Users)
+    {
+        <li>@u.UserName</li>
+    }
+</ul>
+
+<p>
+    A hierarquia de roles é a seguinte:
 </p>

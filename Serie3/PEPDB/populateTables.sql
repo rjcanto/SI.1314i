@@ -32,10 +32,10 @@ INSERT INTO [Action](actionName) VALUES ('head');
 INSERT INTO [Action](actionName) VALUES ('delete');
 
 -- Populate Resources
-INSERT INTO [Resource](resourceName) VALUES ('/protected/u/ricardo');
-INSERT INTO [Resource](resourceName) VALUES ('/protected/u/luis');
-INSERT INTO [Resource](resourceName) VALUES ('/protected/u/user');
-INSERT INTO [Resource](resourceName) VALUES ('/protected/u/guest');
+INSERT INTO [Resource](resourceName) VALUES ('/Home/Resource/ricardo');
+INSERT INTO [Resource](resourceName) VALUES ('/Home/Resource/luis');
+INSERT INTO [Resource](resourceName) VALUES ('/Home/Resource/user');
+INSERT INTO [Resource](resourceName) VALUES ('/Home/Resource/guest');
 
 -- Populate Permission
 INSERT INTO [Permission](resourceId, actionId) VALUES (1, 1);

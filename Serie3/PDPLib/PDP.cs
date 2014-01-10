@@ -14,7 +14,7 @@ namespace PDPLib
         public static string ConnStringName { get; set; }
         public static List<Role> listRoles = null;
 
-        internal static IDatabase GetDB()
+        internal static Database GetDB()
         {
             return new Database(ConnStringName);
         }
@@ -186,13 +186,21 @@ namespace PDPLib
         
         public IList<Resource> getResourcesOfAuthorizedUser(String userName, String actionName)
         {
-            return
-                (
-                    from Permission p in getPermissionsOfUser(userName)
-                    join Resource r in GetResources() on p.ResourceId equals r.ResourceId
-                    select r
-                ).ToList();
+            using (var db = GetDB())
+            {
+                db.OpenSharedConnection();
+                db.KeepConnectionAlive = true;
 
+                var resources = (
+                                    from Permission p in getPermissionsOfUser(userName)
+                                    join Resource r in GetResources() on p.ResourceId equals r.ResourceId
+                                    select r
+                                ).ToList();
+
+                db.KeepConnectionAlive = false;
+                db.CloseSharedConnection();
+                return resources;
+            }
 
         }
 
