@@ -9,5 +9,10 @@ namespace PDPLib.Models
     {
         public int ResourceId { get; set; }
         public String ResourceName { get; set; }
+
+        public override string ToString()
+        {
+            return ResourceName;
+        }
     }
 }

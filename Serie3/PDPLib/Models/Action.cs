@@ -9,5 +9,10 @@ namespace PDPLib.Models
     {
         public int ActionId { get; set; }
         public String ActionName { get; set; }
+
+        public override string ToString()
+        {
+            return ActionName;
+        }
     }
 }

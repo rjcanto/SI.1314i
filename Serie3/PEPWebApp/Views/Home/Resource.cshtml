@@ -1,8 +1,8 @@
-﻿@{
-    ViewBag.Title = "Resource";
+﻿@using PDPLib.Models
+@{
+    ViewBag.Title = "Recursos";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 
 @if (@ViewBag.Username != null)
@@ -11,5 +11,19 @@
 }
 else
 {
-    <h2>Páginas de acesso restrito que está autorizado a aceder:</h2>
+    <h2>Páginas de acesso restrito a que está autorizado a aceder:</h2>
+    
+    if (@ViewBag.Resources == null)
+    {
+        <p>Não está autorizado a aceder a nenhuma página.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (Resource r in ViewBag.Resources)
+            {
+                <li><a href="@r.ResourceName" /> @r.ResourceName</li>
+            }
+        </ul>
+    }
 }
