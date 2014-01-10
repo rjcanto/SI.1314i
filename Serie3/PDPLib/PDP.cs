@@ -184,7 +184,17 @@ namespace PDPLib
             }
         }
         
-        public List<Resource> getResourcesOfAuthorizedUser(String userName, String actionName);
+        public IList<Resource> getResourcesOfAuthorizedUser(String userName, String actionName)
+        {
+            return
+                (
+                    from Permission p in getPermissionsOfUser(userName)
+                    join Resource r in GetResources() on p.ResourceId equals r.ResourceId
+                    select r
+                ).ToList();
+
+
+        }
 
         //TODO isActionAllowedOfUserWithResource(String actionName, String userName, String resource)
         // Version 0.1 (does not iterate through the role hierarchy)
@@ -237,6 +247,14 @@ namespace PDPLib
             using (IDatabase db = GetDB())
             {
                 return db.Fetch<User>();
+            }
+        }
+
+        public IList<Resource> GetResources()
+        {
+            using (IDatabase db = GetDB())
+            {
+                return db.Fetch<Resource>();
             }
         }
     }
