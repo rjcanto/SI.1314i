@@ -8,7 +8,7 @@ namespace PDPLib.Models
     public class Permission
     {
         public int ResourceId { get; set; }
-        public String ActionId { get; set; }
+        public int ActionId { get; set; }
 
         public override string ToString()
         {
