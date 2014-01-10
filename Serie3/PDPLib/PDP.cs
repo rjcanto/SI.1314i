@@ -106,43 +106,6 @@ namespace PDPLib
             }
         }
 
-        //TODO getActionsAllowedOfUserWithResource(String userName,String resource)
-        // Version 0.1 (does not iterate through the role hierarchy)
-        public List<Action> getActionsAllowedOfUserWithResourceOld(String userName, String resourceName)
-        {
-            using (IDatabase db = GetDB())
-            {
-                User usr = db.Single<User>("where userName = @0", userName);
-                Resource res = db.Single<Resource>("where resourceName = @0", resourceName);
-
-                if (listRoles == null)
-                    this.getRolesHierarchy(db);
-
-
-
-                foreach (Role r in listRoles)
-                    r.juniorRolesList = db.Fetch<Role>(
-                                         "SELECT Role.* FROM Role"
-                                        + "INNER JOIN RoleHierarchy ON Role.roleId = RoleHierarchy.juniorRoleId"
-                                        + "WHERE	RoleHierarchy.roleId = @0",
-                                        r.RoleId
-                    );
-
-                return db.Fetch<Action>("SELECT Action.*" +
-                                        "FROM Action INNER JOIN PermissionAssignment" +
-                                        "ON (Action.actionId = PermissionAssignment.actionId)" +
-                                        "INNER JOIN Role" +
-                                        "ON (PermissionAssignment.roleId = Role.roleId)" +
-                                        "INNER JOIN UserAssignment" +
-                                        "ON (UserAssignment.roleId = Role.roleId)" +
-                                        "INNER JOIN [User]" +
-                                        "ON ([User].userId = UserAssignment.userId)" +
-                                        "WHERE (PermissionAssignment.resourceId = @0" +
-                                        "AND [User].username = @1)",
-                                        res.ResourceId, usr.UserId);
-            }
-        }
-
         public IList<Action> getActionsAllowedOfUserWithResource(String userName, String resourceName)
         {
             return
@@ -165,50 +128,15 @@ namespace PDPLib
 
         }
 
-        //TODO isActionAllowedOfUserWithResource(String actionName, String userName, String resource)
-        // Version 0.1 (does not iterate through the role hierarchy)
-        public Boolean isActionAllowedOfUserWithResource_OLD(String actionName, String userName, String resourceName)
-        {
-            using (IDatabase db = GetDB())
-            {
-                Resource res = db.Single<Resource>("where resourceName = @0", resourceName);
-                Action act = db.Single<Action>("where actionName = @0", actionName);
-
-                User usr = db.Single<User>("SELECT [User].*" +
-                                      "FROM [User] INNER JOIN UserAssignment!" +
-                                      "ON ([User].userId = UserAssignment.userId)" +
-                                      "INNER JOIN Role" +
-                                      "ON (UserAssignment.roleId = Role.roleId)" +
-                                      "INNER JOIN PermissionAssignment" +
-                                      "ON (PermissionAssignment.roleId = Role.roleId)" +
-                                      "WHERE (PermissionAssignment.resourceId = @0" +
-                                      "AND PermissionAssignment.actionId = @1" +
-                                      "AND [User].username = @2)",
-                                      res.ResourceId, act.ActionId, userName);
-                return (usr != null);
-            }
-        }
-
-        //TODO
         public Boolean isActionAllowedOfUserWithResource(String actionName, String userName, String resourceName)
         {
-            using (IDatabase db = GetDB())
-            {
-                Resource res = db.Single<Resource>("where resourceName = @0", resourceName);
-                Action act = db.Single<Action>("where actionName = @0", actionName);
-                User usr = db.Single<User>("SELECT [User].*" +
-                                     "FROM [User] INNER JOIN UserAssignment!" +
-                                     "ON ([User].userId = UserAssignment.userId)" +
-                                     "INNER JOIN Role" +
-                                     "ON (UserAssignment.roleId = Role.roleId)" +
-                                     "INNER JOIN PermissionAssignment" +
-                                     "ON (PermissionAssignment.roleId = Role.roleId)" +
-                                     "WHERE (PermissionAssignment.resourceId = @0" +
-                                     "AND PermissionAssignment.actionId = @1" +
-                                     "AND [User].username = @2)",
-                                     res.ResourceId, act.ActionId, userName);
-                return (usr != null);
-            }
+            return
+                ((
+                    from Action a in getActionsAllowedOfUserWithResource(userName,resourceName)
+                    where a.ActionName == actionName
+                    select a
+                    
+                ).Count<Action>() != 0);
         }
 
         public IList<User> GetUsers()

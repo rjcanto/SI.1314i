@@ -16,22 +16,11 @@ namespace PDPLibTest
             PDP.ConnStringName = "Local";
             PDP lib = new PDP();
 
-            //isActionAllowedOfUserWithResourceTest(lib);
             //getRolesOfUserTest(lib);
             //getPermissionsOfUserTest(lib);
-            getActionsAllowedOfUserWithResourceTest(lib);
+            //getActionsAllowedOfUserWithResourceTest(lib);
+            isActionAllowedOfUserWithResourceTest(lib);
             Console.ReadKey();
-        }
-
-        static void isActionAllowedOfUserWithResourceTest(PDP lib)
-        {
-            
-            String actionName = "Executar ficheiros";
-            String userName = "Ricardo";
-            String resourceName = "/folder";
-            if (lib.isActionAllowedOfUserWithResource(actionName,userName,resourceName))
-                Console.WriteLine("A acção {1} é permitida sobre o recurso {2} para o utilizador {3}.");
-            else Console.WriteLine("A acção {1} NÃO é permitida sobre o recurso {2} para o utilizador {3}.");
         }
 
         static void getRolesOfUserTest(PDP lib)
@@ -79,6 +68,17 @@ namespace PDPLibTest
                     Console.WriteLine("\t {0}", a.ActionName);
             }
         }
-        
+
+        static void isActionAllowedOfUserWithResourceTest(PDP lib)
+        {
+            String userName = "Miguel";
+            String resourceName = "/folder/file1.txt";
+            String actionName = "Criar ficheiros e pastas";
+            if (!lib.isActionAllowedOfUserWithResource(actionName, userName, resourceName))
+                Console.WriteLine("O utilizador {0} não tem permissão {1} sobre o recurso {2}.", userName, actionName, resourceName);
+            else
+                Console.WriteLine("O utilizador {0} tem permissão {1} sobre o recurso {2}.", userName, actionName, resourceName);
+                
+        }
     }
 }
