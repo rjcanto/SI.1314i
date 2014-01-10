@@ -19,6 +19,8 @@ namespace PDPLib
             return new Database(ConnStringName);
         }
 
+        #region DB Queries
+
         public List<User> getUsersWithPermission(String actionName, String resourceName)
         {
             using (IDatabase db = GetDB())
@@ -34,7 +36,6 @@ namespace PDPLib
                                       act != null ? (int?)act.ActionId : null,
                                       res != null ? (int?)res.ResourceId : null);
             }
-
         }
 
         public List<User> getUsersWithRole(String roleName)
@@ -65,13 +66,13 @@ namespace PDPLib
                                          "WHERE [User].username = @0;",
                                          userName);
                 IEnumerable<Role> tmp = list;
-                
+
                 foreach (Role r in list)
                 {
                     tmp = tmp.Concat<Role>(getJuniorRolesofRole(r));
                 }
-                
-                return tmp.ToList<Role>();
+
+                return tmp.Distinct().ToList<Role>();
 
             }
         }
@@ -82,8 +83,9 @@ namespace PDPLib
             {
                 List<Role> list = getRolesOfUser(userName);
                 List<Permission> result = null;
-              
-                foreach (Role r in list) {
+
+                foreach (Role r in list)
+                {
                     List<Permission> tmp = db.Fetch<Permission>("SELECT Permission.*"
                                         + " FROM Permission INNER JOIN PermissionAssignment"
                                         + " ON ((Permission.actionId = PermissionAssignment.actionId)"
@@ -106,7 +108,7 @@ namespace PDPLib
 
         //TODO getActionsAllowedOfUserWithResource(String userName,String resource)
         // Version 0.1 (does not iterate through the role hierarchy)
-        public List<Action> getActionsAllowedOfUserWithResource(String userName, String resourceName)
+        public List<Action> getActionsAllowedOfUserWithResourceOld(String userName, String resourceName)
         {
             using (IDatabase db = GetDB())
             {
@@ -116,13 +118,13 @@ namespace PDPLib
                 if (listRoles == null)
                     this.getRolesHierarchy(db);
 
-                
+
 
                 foreach (Role r in listRoles)
                     r.juniorRolesList = db.Fetch<Role>(
                                          "SELECT Role.* FROM Role"
-                                        +"INNER JOIN RoleHierarchy ON Role.roleId = RoleHierarchy.juniorRoleId"
-                                        +"WHERE	RoleHierarchy.roleId = @0",
+                                        + "INNER JOIN RoleHierarchy ON Role.roleId = RoleHierarchy.juniorRoleId"
+                                        + "WHERE	RoleHierarchy.roleId = @0",
                                         r.RoleId
                     );
 
@@ -141,49 +143,16 @@ namespace PDPLib
             }
         }
 
-        //Support method to retrieve Roles Hierarchy from database
-        private void getRolesHierarchy(IDatabase db)
+        public IList<Action> getActionsAllowedOfUserWithResource(String userName, String resourceName)
         {
-            listRoles = db.Fetch<Role>("SELECT Role.* FROM Role");
-
-            foreach (Role parentRole in listRoles)
-                getRolesHierarchyRecursive(db, parentRole);
-            
+            return
+                (
+                    from Permission p in getPermissionsOfUser(userName)
+                    join Action a in GetActions() on p.ActionId equals a.ActionId
+                    select a
+                ).ToList();
         }
 
-        private void getRolesHierarchyRecursive(IDatabase db, Role parentRole)
-        {
-            if (parentRole == null)
-                return;
-
-           
-            parentRole.juniorRolesList = db.Fetch<Role>(
-                                "SELECT Role.* FROM Role "
-                                + "INNER JOIN RoleHierarchy ON Role.roleId = RoleHierarchy.juniorRoleId "
-                                + "WHERE RoleHierarchy.roleId = @0;",
-                                parentRole.RoleId
-            );
-
-            foreach ( Role juniorRole in parentRole.juniorRolesList)
-                getRolesHierarchyRecursive(db, juniorRole);
-            
-        }
-
-        private IEnumerable<Role> getJuniorRolesofRole(Role parentRole)
-        {
-            if (parentRole == null)
-                yield break;
-
-            Role parentRoleTmp = listRoles.Find(x => parentRole.RoleName == x.RoleName);
-
-            foreach (Role r in parentRoleTmp.juniorRolesList)
-            {
-                yield return r;
-                getJuniorRolesofRole(r);
-
-            }
-        }
-        
         public IList<Resource> getResourcesOfAuthorizedUser(String userName, String actionName)
         {
             return
@@ -241,7 +210,7 @@ namespace PDPLib
                 return (usr != null);
             }
         }
-        
+
         public IList<User> GetUsers()
         {
             using (IDatabase db = GetDB())
@@ -257,5 +226,67 @@ namespace PDPLib
                 return db.Fetch<Resource>();
             }
         }
+
+        public IList<Action> GetActions()
+        {
+            using (IDatabase db = GetDB())
+            {
+                return db.Fetch<Action>();
+            }
+        }
+
+        #endregion
+
+        #region Support Methods
+
+        //Support method to retrieve Roles Hierarchy from database
+        private void getRolesHierarchy(IDatabase db)
+        {
+            listRoles = db.Fetch<Role>("SELECT Role.* FROM Role");
+
+            foreach (Role parentRole in listRoles)
+                getRolesHierarchyRecursive(db, parentRole);
+
+        }
+
+        private void getRolesHierarchyRecursive(IDatabase db, Role parentRole)
+        {
+            if (parentRole == null)
+                return;
+
+
+            parentRole.juniorRolesList = db.Fetch<Role>(
+                                "SELECT Role.* FROM Role "
+                                + "INNER JOIN RoleHierarchy ON Role.roleId = RoleHierarchy.juniorRoleId "
+                                + "WHERE RoleHierarchy.roleId = @0;",
+                                parentRole.RoleId
+            );
+
+            foreach (Role juniorRole in parentRole.juniorRolesList)
+                getRolesHierarchyRecursive(db, juniorRole);
+
+        }
+
+        // Podem surgir resultados em duplicado. Aplicar sobre o IEnumberable retornado Distict.
+        private IEnumerable<Role> getJuniorRolesofRole(Role parentRole)
+        {
+            if (parentRole == null)
+                yield break;
+
+            Role parentRoleTmp = listRoles.Find(x => parentRole.RoleName == x.RoleName);
+
+            foreach (Role r in parentRoleTmp.juniorRolesList)
+            {
+                yield return r;
+                foreach (Role juniorRole in getJuniorRolesofRole(r))
+                {
+                    yield return juniorRole;
+                }
+                
+            }
+        }
+
+
+        #endregion
     }
 }

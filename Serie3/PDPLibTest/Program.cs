@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PDPLib;
 using PDPLib.Models;
+using Action = PDPLib.Models.Action;
 
 namespace PDPLibTest
 {
@@ -17,7 +18,8 @@ namespace PDPLibTest
 
             //isActionAllowedOfUserWithResourceTest(lib);
             //getRolesOfUserTest(lib);
-            getPermissionsOfUserTest(lib);
+            //getPermissionsOfUserTest(lib);
+            getActionsAllowedOfUserWithResourceTest(lib);
             Console.ReadKey();
         }
 
@@ -61,5 +63,22 @@ namespace PDPLibTest
                     Console.WriteLine("\t Permissão {0} sobre o recurso {1}.", p.ActionId,p.ResourceId);
             }
         }
+
+        static void getActionsAllowedOfUserWithResourceTest(PDP lib)
+        {
+            String userName = "Ricardo";
+            String resourceName = "/folder/file1.txt";
+            List<Action> result = lib.getActionsAllowedOfUserWithResource(userName,resourceName).ToList<Action>();
+
+            if (result == null)
+                Console.WriteLine("O utilizador {0} não tem Permissões", userName);
+            else
+            {
+                Console.WriteLine("O utilizador {0} tem as seguintes acções sobre o recurso {1}:", userName, resourceName);
+                foreach (Action a in result.Distinct())
+                    Console.WriteLine("\t {0}", a.ActionName);
+            }
+        }
+        
     }
 }

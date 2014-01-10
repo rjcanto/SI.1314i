@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PDPLib.Models
 {
-    public class Role
+    public class Role : IEquatable<Role>
     {
         private List<Permission> permissionList;
 
@@ -15,5 +15,25 @@ namespace PDPLib.Models
         public int RoleId { get; set; }
         public String RoleName { get; set; }
         public List<Role> juniorRolesList { get; set; }
+
+        public bool Equals(Role other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return RoleId == other.RoleId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Role)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return RoleId;
+        }
     }
 }
