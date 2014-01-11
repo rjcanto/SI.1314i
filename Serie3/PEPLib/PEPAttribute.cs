@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,20 +11,29 @@ using PDPLib.Models;
 
 namespace PEPLib
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class PEPAttribute : AuthorizeAttribute
     {
         private readonly bool _caseSensitive;
 
-        public PEPAttribute(string connectionName, bool caseSensitive = false)
+        public static string ConnStringName
         {
-            PDP.ConnStringName = connectionName;
+            get { return PDP.ConnStringName; }
+            set { PDP.ConnStringName = value; }
+        }
+
+        public PEPAttribute(string connectionName, bool caseSensitive = false) : this(caseSensitive)
+        {
+            ConnStringName = connectionName;
+        }
+
+        public PEPAttribute(bool caseSensitive = false)
+        {
             _caseSensitive = caseSensitive;
         }
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            // Passar a conn string por parametro ao constructor
             var pdp = new PDP();
 
             string action = httpContext.Request.HttpMethod;
@@ -35,13 +45,40 @@ namespace PEPLib
                 resource = resource.ToLower();
             }
 
-            var authorized = (
+            try
+            {
+                var authorized = (
                                  from User u in pdp.getUsersWithPermission(action, resource)
                                  where u.UserName == httpContext.User.Identity.Name
                                  select u
                              );
 
-            return authorized.Any() || base.AuthorizeCore(httpContext);
+                return authorized.Any();
+            }
+            catch (Exception e)
+            {
+                if (!(e is ActionNotFoundException) && !(e is ResourceNotFoundException))
+                {
+                    throw;
+                }
+
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                return base.AuthorizeCore(httpContext);
+            }
+
+            
+        }
+
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            if (filterContext.HttpContext.Request.IsAuthenticated)
+            {
+                filterContext.Result = new HttpStatusCodeResult((int)HttpStatusCode.Forbidden);
+            }
+            else
+            {
+                base.HandleUnauthorizedRequest(filterContext);
+            }
         }
     }
 }

@@ -41,8 +41,6 @@ namespace PEPWebApp.Filters
                         }
                     }
 
-                    PDP.ConnStringName = "Local";
-
                     WebSecurity.InitializeDatabaseConnection("Local", "User", "userId", "username", autoCreateTables: true);
 
                     // Create accounts for all users, if they don't exist already

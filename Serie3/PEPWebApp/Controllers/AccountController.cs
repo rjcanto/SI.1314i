@@ -13,7 +13,7 @@ using PEPWebApp.Models;
 
 namespace PEPWebApp.Controllers
 {
-    [PEP("Local")]
+    [PEP]
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
