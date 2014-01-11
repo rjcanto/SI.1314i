@@ -26,15 +26,25 @@ namespace PDPLib
             using (IDatabase db = GetDB())
             {
                 Action act = db.SingleOrDefault<Action>("where actionname = @0", actionName);
+                if (act == null)
+                {
+                    throw new ActionNotFoundException(actionName);
+                }
+
                 Resource res = db.SingleOrDefault<Resource>("where resourcename = @0", resourceName);
+                if (res == null)
+                {
+                    throw new ResourceNotFoundException(resourceName);
+                }
+                
                 return db.Fetch<User>("SELECT [User].* " +
                                       "FROM [User] INNER JOIN UserAssignment " +
                                       "ON ([User].userId = UserAssignment.userId) " +
                                       "INNER JOIN PermissionAssignment " +
                                       "ON (UserAssignment.roleId = PermissionAssignment.roleId) " +
                                       "WHERE (PermissionAssignment.actionId = @0 AND PermissionAssignment.resourceId = @1)",
-                                      act != null ? (int?)act.ActionId : null,
-                                      res != null ? (int?)res.ResourceId : null);
+                                      act.ActionId,
+                                      res.ResourceId);
             }
         }
 
@@ -92,10 +102,6 @@ namespace PDPLib
                                         + " AND (Permission.resourceId = PermissionAssignment.resourceId))"
                                         + " INNER JOIN Role"
                                         + " ON (PermissionAssignment.roleId = Role.roleId)"
-                                        + " INNER JOIN UserAssignment"
-                                        + " ON (UserAssignment.roleId = Role.roleId)"
-                                        + " INNER JOIN [User]"
-                                        + " ON ([User].userId = UserAssignment.userId)"
                                         + " WHERE (Role.roleId = @0);",
                                           r.RoleId);
                     if (result == null)
@@ -215,8 +221,6 @@ namespace PDPLib
             {
                 yield return r;
                 foreach (Role juniorRole in getJuniorRolesofRole(r))
-
-               
                 {
                     yield return juniorRole;
                 }
