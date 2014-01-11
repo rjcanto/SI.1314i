@@ -12,7 +12,7 @@ using PDPLib.Models;
 namespace PEPLib
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    public class PEPAttribute : AuthorizeAttribute
+    public class PolicyEnforcementAttribute : AuthorizeAttribute
     {
         private readonly bool _caseSensitive;
 
@@ -22,12 +22,12 @@ namespace PEPLib
             set { PDP.ConnStringName = value; }
         }
 
-        public PEPAttribute(string connectionName, bool caseSensitive = false) : this(caseSensitive)
+        public PolicyEnforcementAttribute(string connectionName, bool caseSensitive = false) : this(caseSensitive)
         {
             ConnStringName = connectionName;
         }
 
-        public PEPAttribute(bool caseSensitive = false)
+        public PolicyEnforcementAttribute(bool caseSensitive = false)
         {
             _caseSensitive = caseSensitive;
         }

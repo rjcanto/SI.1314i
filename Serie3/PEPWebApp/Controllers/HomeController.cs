@@ -29,7 +29,7 @@ namespace PEPWebApp.Controllers
             return View();
         }
 
-        [PEP]
+        [PolicyEnforcement]
         public ActionResult Resource(string id)
         {
             ViewBag.Username = id;

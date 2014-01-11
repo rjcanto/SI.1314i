@@ -24,7 +24,7 @@ namespace PEPWebApp
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
-            PEPLib.PEPAttribute.ConnStringName = "Local";
+            PEPLib.PolicyEnforcementAttribute.ConnStringName = "Local";
         }
     }
 }
