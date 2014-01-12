@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using PDPLib;
+using PDPLib.Models;
 using PEPLib;
 using WebMatrix.WebData;
 
@@ -15,7 +17,28 @@ namespace PEPWebApp.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = "PEP - Policy Enforcement Point.";
-            ViewBag.Users = new PDP().GetUsers();
+
+            var pdp = new PDP();
+            IList<User> users = pdp.GetUsers();
+            var userRoles = new Dictionary<int, string>();
+
+            foreach (var user in users)
+            {
+                List<Role> roles = pdp.getRolesOfUser(user.UserName);
+                var sb = new StringBuilder();
+                foreach (var role in roles)
+                {
+                    if (sb.Length != 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(role.RoleName);
+                }
+                userRoles[user.UserId] = sb.ToString();
+            }
+
+            ViewBag.Users = users;
+            ViewBag.UserRoles = userRoles;
             return View();
         }
 

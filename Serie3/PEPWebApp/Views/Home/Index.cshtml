@@ -26,10 +26,13 @@
 <ul>
     @foreach (User u in ViewBag.Users)
     {
-        <li>@u.UserName</li>
+        <li>
+            @u.UserName (@ViewBag.userRoles[u.UserId])
+        </li>
     }
 </ul>
 
 <p>
     A hierarquia de roles é a seguinte:
 </p>
+<img src="/Images/roles.png" />
