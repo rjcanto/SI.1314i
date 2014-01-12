@@ -1,4 +1,5 @@
 USE PEPDB
+SET NOCOUNT ON;
 
 -- Populate USER
 INSERT INTO [User](username) VALUES ('ricardo');

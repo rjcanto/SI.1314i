@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NPoco;
 
 namespace PDPLib.Models
 {
@@ -14,6 +15,8 @@ namespace PDPLib.Models
 
         public int RoleId { get; set; }
         public String RoleName { get; set; }
+
+        [Ignore]
         public List<Role> juniorRolesList { get; set; }
 
         public bool Equals(Role other)

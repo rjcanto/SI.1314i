@@ -101,5 +101,124 @@ namespace PDPLibTest
 
             Assert.That(() => pdp.getResourcesOfAuthorizedUser("Unknown user", "Unknown action"), Throws.TypeOf<ActionNotFoundException>());
         }
+
+        [Test]
+        public void GetPermissionsForUnknownUserReturnsEmptyList()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.getPermissionsOfUser("Unknown user"), Is.EquivalentTo(new string[] { }));
+        }
+
+        [Test]
+        public void IsActionAllowedForUnknownActionThrowsActionNotFoundException()
+        {
+            var pdp = new PDP();
+
+            Assert.That(() => pdp.isActionAllowedOfUserWithResource("unknown action", "Ricardo", "/folder"), Throws.TypeOf<ActionNotFoundException>());
+        }
+
+        [Test]
+        public void IsActionAllowedForUnknownResourceThrowsResourceNotFoundException()
+        {
+            var pdp = new PDP();
+
+            Assert.That(() => pdp.isActionAllowedOfUserWithResource("Executar ficheiros", "Ricardo", "unknown resource"), Throws.TypeOf<ResourceNotFoundException>());
+        }
+
+        [Test]
+        public void IsActionAllowedForUnknownUserTReturnsFalse()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.isActionAllowedOfUserWithResource("Executar ficheiros", "Unknown user", "/folder"), Is.False);
+        }
+
+        [Test]
+        public void GetActionsAllowedForUnknownResourceThrowsResourceNotFoundException()
+        {
+            var pdp = new PDP();
+
+            Assert.That(() => pdp.getActionsAllowedOfUserWithResource("Ricardo", "unknown resource"), Throws.TypeOf<ResourceNotFoundException>());
+        }
+
+        [Test]
+        public void GetActionsAllowedForUnknownUserReturnsEmptyList()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.getActionsAllowedOfUserWithResource("Unknown user", "/folder"), Is.EquivalentTo(new string[] {}));
+        }
+
+        [Test]
+        public void GetActionsAllowedForExistingUserAndResourceSucceeds()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.getActionsAllowedOfUserWithResource("João", "/folder").Select(action => action.ActionName),
+                        Is.EquivalentTo(new[]
+                            {
+                                "Ver o conteúdo de ficheiros e listar conteúdo de pastas",
+                                "Criar ficheiros e pastas",
+                                "Executar ficheiros"
+                            }));
+
+            Assert.That(pdp.getActionsAllowedOfUserWithResource("Pedro", "/folder/file3.txt").Select(action => action.ActionName),
+                       Is.EquivalentTo(new[] { "Ver o conteúdo de ficheiros e listar conteúdo de pastas" }));
+        }
+
+        [Test]
+        public void GetRolesForUnknownUserReturnsEmptyList()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.getRolesOfUser("unknown user"), Is.EquivalentTo(new string[] { }));
+        }
+
+        [Test]
+        public void GetRolesForExistingUserSucceeds()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.getRolesOfUser("Ricardo").Select(role => role.RoleName),
+                Is.EquivalentTo(new[] {"Admin", "Manager", "Director", "User", "Guest"}));
+        }
+
+        [Test]
+        public void GetUsersForExistingRoleSucceeds()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.getUsersWithRole("Admin").Select(user => user.UserName),
+                Is.EquivalentTo(new[] { "Ricardo"}));
+
+            Assert.That(pdp.getUsersWithRole("User").Select(user => user.UserName),
+                Is.EquivalentTo(new[] { "Teresa", "Lídia", "Sara", "Elsa", "Mário", "Cristina" }));
+        }
+
+        [Test]
+        public void GetUsersForUnknownRoleReturnsEmptyList()
+        {
+            var pdp = new PDP();
+
+            Assert.That(pdp.getUsersWithRole("Unknown role").Select(user => user.UserName),
+                Is.EquivalentTo(new string[] {}));
+        }
+
+        [Test]
+        public void GetUsersWithPermissionThrowsActionNotFoundForUnknownAction()
+        {
+            var pdp = new PDP();
+
+            Assert.That(() => pdp.getUsersWithPermission("Unknown action", "/folder"), Throws.TypeOf<ActionNotFoundException>());
+        }
+
+        [Test]
+        public void GetUsersWithPermissionThrowsResourceNotFoundForUnknownResource()
+        {
+            var pdp = new PDP();
+
+            Assert.That(() => pdp.getUsersWithPermission("Executar ficheiros", "Unknown resource"), Throws.TypeOf<ResourceNotFoundException>());
+        }
     }
 }

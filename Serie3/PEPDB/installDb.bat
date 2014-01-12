@@ -1,9 +1,18 @@
 @echo off
-if [%1] == [] goto usage
-if [%2] == [] goto usage
-if [%3] == [] goto usage
-if [%4] == [] goto usage
-if [%5] == [] goto usage
+
+if [%1] == [/?] goto :usage
+if [%1] == [-?] goto :usage
+
+set server=%1
+if [%server%] NEQ [] goto :serverSet
+set server=localhost
+echo Servidor não especificado, utilizando localhost por omissão.
+
+:serverSet
+SET /P ANSWER=Será criada a base de dados PEPDB no servidor %server%. Deseja continuar (S/N)?
+if /i {%ANSWER%}=={s} (goto :yes)
+goto :end
+:yes 
 
 echo ##########################################################
 echo #                    B U I L D I N G                     #
@@ -15,7 +24,7 @@ buildTables.sql
 	@echo on 
 	echo executing %%f 
 	echo off
-	SQLCMD -b -S %4 -U %1 -P %2 -d %3 -i ".\"%f 
+	SQLCMD -b -S %server% -d PEPDB -i ".\"%%f 
 	if ERRORLEVEL 1 exit /b 1
 	@echo off
 )
@@ -31,7 +40,7 @@ populateTables.sql
 	@echo on 
 	echo executing %%f 
 	echo off
-	SQLCMD -b -S %4 -U %1 -P %2 -d %3 -i ".\"%f 
+	SQLCMD -b -S %server% -d PEPDB -i ".\"%%f 
 	if ERRORLEVEL 1 exit /b 1
 	@echo off
 )
@@ -40,6 +49,7 @@ echo ############       Populating Ended        ###############
 goto end
 
 :usage
-echo usage: "DBInstaller.bat <dbUserName> <dbPassword> <dbName> <server>"
+echo usage: "installDb.bat [server]"
+echo 	server - defaults to localhost
 pause
 :end

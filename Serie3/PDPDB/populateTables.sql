@@ -1,4 +1,5 @@
 USE PDPDB
+SET NOCOUNT ON;
 
 -- Populate USER
 INSERT INTO [User](username) VALUES ('Ricardo');
@@ -85,7 +86,6 @@ INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 1, 1
 INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 1, 2);
 INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 1, 3);
 INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 1, 4);
---INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 1, 5);
 INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 2, 2);
 INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 2, 3);
 INSERT INTO [PermissionAssignment](roleId, resourceId, actionId) VALUES (1, 2, 4);

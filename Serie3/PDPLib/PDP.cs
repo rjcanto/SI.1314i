@@ -52,11 +52,16 @@ namespace PDPLib
         {
             using (IDatabase db = GetDB())
             {
-                Role r = db.Single<Role>("where rolename = @0", roleName);
-                return db.Fetch<User>("SELECT [User].*" +
-                                      "FROM [User] INNER JOIN UserAssignment" +
-                                      "ON ([User].userId = UserAssignment.userId)" +
-                                      "WHERE UserAssignment.roleId = @0)",
+                Role r = db.SingleOrDefault<Role>("where rolename = @0", roleName);
+                if (r == null)
+                {
+                    return new List<User>();
+                }
+
+                return db.Fetch<User>("SELECT [User].* " +
+                                      "FROM [User] INNER JOIN UserAssignment " +
+                                      "ON [User].userId = UserAssignment.userId " +
+                                      "WHERE UserAssignment.roleId = @0",
                                       r.RoleId);
             }
         }
@@ -67,7 +72,7 @@ namespace PDPLib
             {
                 if (listRoles == null)
                     this.getRolesHierarchy(db);
-                //User u = db.Single<User>("where username = @0", userName);
+                
                 List<Role> list = db.Fetch<Role>("SELECT Role.* " +
                                          "FROM Role INNER JOIN UserAssignment " +
                                          "ON (Role.roleId = UserAssignment.roleId) " +
@@ -115,12 +120,25 @@ namespace PDPLib
 
         public IList<Action> getActionsAllowedOfUserWithResource(String userName, String resourceName)
         {
-            return
+            using (var db = GetDB())
+            {
+
+                var resource = db.FetchWhere<Resource>(r => r.ResourceName == resourceName).SingleOrDefault();
+                if (resource == null)
+                {
+                    throw new ResourceNotFoundException(resourceName);
+                }
+
+                return
                 (
                     from Permission p in getPermissionsOfUser(userName)
                     join Action a in GetActions() on p.ActionId equals a.ActionId
+                    where p.ResourceId == resource.ResourceId
                     select a
                 ).ToList();
+            }
+
+            
         }
 
         
@@ -152,13 +170,24 @@ namespace PDPLib
 
         public Boolean isActionAllowedOfUserWithResource(String actionName, String userName, String resourceName)
         {
-            return
-                ((
-                    from Action a in getActionsAllowedOfUserWithResource(userName,resourceName)
-                    where a.ActionName == actionName
-                    select a
-                    
-                ).Count<Action>() != 0);
+            using (var db = GetDB())
+            {
+                Action action = db.FetchWhere<Action>(a => a.ActionName == actionName).SingleOrDefault();
+                if (action == null)
+                {
+                    throw new ActionNotFoundException(actionName);
+                }
+
+                return
+                    (
+                        from Action a in getActionsAllowedOfUserWithResource(userName, resourceName)
+                        where a.ActionName == actionName
+                        select a
+
+                    ).Any();
+            }
+            
+            
         }
 
         public IList<User> GetUsers()
