@@ -92,8 +92,7 @@ namespace PDPLib
             using (IDatabase db = GetDB())
             {
                 List<Role> list = getRolesOfUser(userName);
-                List<Permission> result = null;
-
+                var permissions = new HashSet<Permission>();
                 foreach (Role r in list)
                 {
                     List<Permission> tmp = db.Fetch<Permission>("SELECT Permission.*"
@@ -104,11 +103,13 @@ namespace PDPLib
                                         + " ON (PermissionAssignment.roleId = Role.roleId)"
                                         + " WHERE (Role.roleId = @0);",
                                           r.RoleId);
-                    if (result == null)
-                        result = tmp;
-                    else result.AddRange(tmp);
+
+                    foreach (Permission p in tmp)
+                    {
+                        permissions.Add(p);
+                    }
                 }
-                return result;
+                return permissions.ToList();
             }
         }
 
@@ -130,9 +131,16 @@ namespace PDPLib
                 db.OpenSharedConnection();
                 db.KeepConnectionAlive = true;
 
+                Action action = db.FetchWhere<Action>(a => a.ActionName == actionName).SingleOrDefault();
+                if (action == null)
+                {
+                    throw new ActionNotFoundException(actionName);
+                }
+
                 var resources = (
                                     from Permission p in getPermissionsOfUser(userName)
                                     join Resource r in GetResources() on p.ResourceId equals r.ResourceId
+                                    where p.ActionId == action.ActionId
                                     select r
                                 ).ToList();
 
