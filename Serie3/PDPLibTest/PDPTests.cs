@@ -111,27 +111,27 @@ namespace PDPLibTest
         }
 
         [Test]
-        public void IsActionAllowedForUnknownActionThrowsActionNotFoundException()
+        public void IsUserAuthorizedForUnknownActionThrowsActionNotFoundException()
         {
             var pdp = new PDP();
 
-            Assert.That(() => pdp.isActionAllowedOfUserWithResource("unknown action", "Ricardo", "/folder"), Throws.TypeOf<ActionNotFoundException>());
+            Assert.That(() => pdp.IsUserAuthorized("Ricardo", "unknown action", "/folder"), Throws.TypeOf<ActionNotFoundException>());
         }
 
         [Test]
-        public void IsActionAllowedForUnknownResourceThrowsResourceNotFoundException()
+        public void IsUserAuthorizedForUnknownResourceThrowsResourceNotFoundException()
         {
             var pdp = new PDP();
 
-            Assert.That(() => pdp.isActionAllowedOfUserWithResource("Executar ficheiros", "Ricardo", "unknown resource"), Throws.TypeOf<ResourceNotFoundException>());
+            Assert.That(() => pdp.IsUserAuthorized("Ricardo", "Executar ficheiros", "unknown resource"), Throws.TypeOf<ResourceNotFoundException>());
         }
 
         [Test]
-        public void IsActionAllowedForUnknownUserTReturnsFalse()
+        public void IsUserAuthorizedForUnknownUserReturnsFalse()
         {
             var pdp = new PDP();
 
-            Assert.That(pdp.isActionAllowedOfUserWithResource("Executar ficheiros", "Unknown user", "/folder"), Is.False);
+            Assert.That(pdp.IsUserAuthorized("Unknown user", "Executar ficheiros", "/folder"), Is.False);
         }
 
         [Test]

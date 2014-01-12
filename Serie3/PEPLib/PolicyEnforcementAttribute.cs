@@ -37,7 +37,10 @@ namespace PEPLib
             var pdp = new PDP();
 
             string action = httpContext.Request.HttpMethod;
+            string username = httpContext.User.Identity.Name;
             string resource = httpContext.Request.Url.AbsolutePath;
+
+
 
             if (!_caseSensitive)
             {
@@ -47,13 +50,7 @@ namespace PEPLib
 
             try
             {
-                var authorized = (
-                                 from User u in pdp.getUsersWithPermission(action, resource)
-                                 where u.UserName == httpContext.User.Identity.Name
-                                 select u
-                             );
-
-                return authorized.Any();
+                return pdp.IsUserAuthorized(username, action, resource);
             }
             catch (Exception e)
             {
@@ -62,6 +59,7 @@ namespace PEPLib
                     throw;
                 }
 
+                // Action or resource unknown to the policy repository. Forward to default AuthorizeAttribute implementation.
                 System.Diagnostics.Debug.WriteLine(e.Message);
                 return base.AuthorizeCore(httpContext);
             }

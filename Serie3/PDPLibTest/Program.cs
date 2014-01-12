@@ -74,7 +74,7 @@ namespace PDPLibTest
             String userName = "Miguel";
             String resourceName = "/folder/file1.txt";
             String actionName = "Criar ficheiros e pastas";
-            if (!lib.isActionAllowedOfUserWithResource(actionName, userName, resourceName))
+            if (!lib.IsUserAuthorized(userName, actionName, resourceName))
                 Console.WriteLine("O utilizador {0} não tem permissão {1} sobre o recurso {2}.", userName, actionName, resourceName);
             else
                 Console.WriteLine("O utilizador {0} tem permissão {1} sobre o recurso {2}.", userName, actionName, resourceName);

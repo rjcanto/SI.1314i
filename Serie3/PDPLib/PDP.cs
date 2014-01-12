@@ -168,7 +168,7 @@ namespace PDPLib
             }
         }
 
-        public Boolean isActionAllowedOfUserWithResource(String actionName, String userName, String resourceName)
+        public bool IsUserAuthorized(string userName, string actionName, string resourceName)
         {
             using (var db = GetDB())
             {
