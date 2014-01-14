@@ -1,0 +1,108 @@
+﻿@{
+    ViewBag.Title = "Exemplo CORS";
+}
+
+@section css
+{
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css">
+    <style>
+        body {
+            padding: 50px;
+            font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+        }
+
+        a {
+            color: #00B7FF;
+        }
+
+        html, body {
+            height: 90%;
+        }
+
+        .fullHeight {
+            height: 80%;
+        
+        }
+
+        #chat {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            background-color: white;
+        }
+    </style>
+}
+
+<div class="container fullHeight">
+    <div class="page-header">
+        <h1>Exemplo CORS</h1>
+        <p>Exemplo de um serviço de chat fornecido por um outro domínio, recorrendo a CORS e ajax para interagir com o mesmo.</p>
+    </div>
+    <div class="row fullHeight">
+    <textarea readonly="readonly" spellcheck="false" id="chat"></textarea>
+    <div class="row controls">
+        <form id="msgForm" action="@(ViewBag.Host)messages">
+        <div class="span3"><input name="username" type="text" class="input-block-level" placeholder="Your Name"></div>
+        <div class="input-append span9">
+            <input name="message" type="text" class="span7" placeholder="Message">
+            <input type="submit" class="span2 btn btn-primary" value="Send">
+        </div>
+        </form>
+    </div>
+    </div>
+</div>
+    
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+    <script>
+
+        // Ajax form submission
+        $("#msgForm").submit(function (event) {
+            event.preventDefault();
+
+            var $form = $(this);
+            $.post(
+                $form.attr("action"),
+                $form.serialize()
+            );
+        });
+
+        // Last message retrieved from the server
+        var lastMsgId = -1;
+
+        // Message polling (1 seconds)
+        setInterval(function () {
+            $.getJSON("@(ViewBag.Host)messages", { "lastMsgId": lastMsgId }, function (data) {
+
+                if (!data) return;
+
+                if (lastMsgId == -1) {
+                    // Ignore message, we just want to know which was the last one
+                    lastMsgId = data.id;
+                    return;
+                }
+
+                // Format new messages
+                var newMessages = "";
+                for (var i = 0; i < data.length; ++i) {
+                    newMessages += data[i].username + ": " + data[i].message + "\n";
+                    lastMsgId = data[i].id;
+                }
+
+                // Append to chat
+                var chat = $("textarea").get(0);
+                chat.value += newMessages;
+
+                // Scroll to bottom
+                chat.scrollTop = chat.scrollHeight;
+            });
+        }, 1000);
+
+    </script>
+}
+
+
+
+    

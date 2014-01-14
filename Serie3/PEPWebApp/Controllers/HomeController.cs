@@ -73,5 +73,17 @@ namespace PEPWebApp.Controllers
 
             return View();
         }
+
+        public ActionResult Chatroom()
+        {
+            string chatServiceHost;
+#if DEBUG
+            chatServiceHost = "https://nodejslab-c9-lbras.c9.io/";
+#else
+            chatServiceHost = "https://chatroom-js.herokuapp.com/";
+#endif
+            ViewBag.Host = chatServiceHost;
+            return View();
+        }
     }
 }

@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width" />
         @Styles.Render("~/Content/css")
         @Scripts.Render("~/bundles/modernizr")
+        @RenderSection("css", required: false)
     </head>
     <body>
         <header>
@@ -23,6 +24,7 @@
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
                             <li>@Html.ActionLink("Recursos", "Resources", "Home")</li>
                             <li>@Html.ActionLink("Contactos", "Contact", "Home")</li>
+                            <li>@Html.ActionLink("Exemplo CORS", "Chatroom", "Home")</li>
                         </ul>
                     </nav>
                 </div>
