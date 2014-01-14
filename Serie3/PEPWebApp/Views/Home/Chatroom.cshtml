@@ -72,8 +72,9 @@
         // Last message retrieved from the server
         var lastMsgId = -1;
 
-        // Message polling (1 seconds)
-        setInterval(function () {
+        // Message polling (1 second)
+        function pollChatServer() {
+
             $.getJSON("@(ViewBag.Host)messages", { "lastMsgId": lastMsgId }, function (data) {
 
                 if (!data) return;
@@ -97,8 +98,16 @@
 
                 // Scroll to bottom
                 chat.scrollTop = chat.scrollHeight;
+            })
+            .always(function () {
+                // Polling
+                setTimeout(function () {
+                    pollChatServer();
+                }, 1000);
             });
-        }, 1000);
+        };
+
+        pollChatServer();
 
     </script>
 }
